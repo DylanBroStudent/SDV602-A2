@@ -2,10 +2,11 @@ from data.user_repository    import UserRepository
 from data.message_repository import MessageRepository
 from model.user              import User
 
-from controller.login_controller import LoginController
-from controller.chat_controller  import ChatController
+from controller.login_controller   import LoginController
+from controller.session_controller import SessionController
 
-HEADLESS = True
+
+HEADLESS = False
 
 class App:
     def __init__(self):
@@ -23,8 +24,7 @@ class App:
             user = login_controller.run()
 
             if user:
-                ChatController(user.name, self.message_repository).run()
-                pass
+                SessionController(user).run()
             else:
                 print(user)
 

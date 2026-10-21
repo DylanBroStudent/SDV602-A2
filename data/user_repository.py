@@ -32,6 +32,7 @@ class UserRepository:
         
         except Exception as e:
             print(f"Something went wrong: {e}")
+
     
     def create_user(self, username, password):
         
