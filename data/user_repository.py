@@ -43,7 +43,7 @@ class UserRepository:
         
         # check for existing user
         if self.db.find_one_by_name(config.USER_COLLECTION, username):
-            raise Exception("Username already taken")
+            raise ValueError("Username already taken")
 
         password_hash = None
         try:

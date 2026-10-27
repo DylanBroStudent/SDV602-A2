@@ -21,6 +21,14 @@ class LoginTests:
         stored_user = self.db.find_one_by_name(config.USER_COLLECTION, self.username)
         assert stored_user is not None
 
+    def test_register_account_exists(self):
+        stored_user = self.db.find_one_by_name(config.USER_COLLECTION, "TakenUsername")
+        if stored_user is not None:
+            self.repository.create_user("TakenUsername", self.password)
+
+        user = self.repository.create_user("TakenUsername", self.password)
+        assert user is None
+
     def test_login_incorrect_password(self):
         user = self.repository.login(self.username, "incorrect")
         assert user is None

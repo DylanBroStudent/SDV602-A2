@@ -17,6 +17,7 @@ class TestManager:
 
             # login tests
             ("Register account",   self.login_tests.test_register_account,         None),
+            ("Account exists",     self.login_tests.test_register_account_exists,  ValueError),
             ("Incorrect password", self.login_tests.test_login_incorrect_password, ValueError),
             ("Correct password",   self.login_tests.test_login_correct_password,   None),
             ("Unknown username",   self.login_tests.test_login_unknown_user,       ValueError)
