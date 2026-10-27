@@ -11,13 +11,14 @@ class UserRepository:
 
     def login(self, username, password):    
         if not type(password) == str or not password:
-            raise Exception("Invalid Password")
+            raise ValueError("Invalid Password")
 
         try:
             # get user by name
             stored_user = self.db.find_one_by_name(config.USER_COLLECTION, username)
+            
             if not stored_user:
-                raise Exception("Failed to find user")
+                raise ValueError("User not found")
             
             # compare pw
             password_encoded = password.encode("utf-8")
@@ -25,12 +26,16 @@ class UserRepository:
             result = bcrypt.checkpw(password_encoded, stored_user["password"])
 
             if not result:
-                raise Exception("Failed to login: Incorrect Password")
+                raise ValueError("Incorrect Password")
 
             # create and return user
             return User(username, password)
-        
+
+        except ValueError:
+            # Catch all value errors
+            raise
         except Exception as e:
+            # Catch everything else
             print(f"Something went wrong: {e}")
 
     
