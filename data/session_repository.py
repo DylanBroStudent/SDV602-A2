@@ -25,11 +25,11 @@ class SessionRepository:
         for document in collection.find({"status": "active"}).sort("name"):
             
             session = Session(
-                document["session_id"],
-                document["name"], 
-                document["host"], 
-                document["status"],
-                document["participants"]
+                session_id   = document["_id"],
+                name         = document["name"], 
+                host         = document["host"], 
+                status       = document["status"],
+                participants = document["participants"]
             )
             
             sessions.append(session)

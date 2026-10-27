@@ -27,6 +27,7 @@ class BrowserView:
         self.window = sg.Window("Session Browser", self.layout, finalize=True)
 
     def update_sessions(self, sessions):
+        selected = values["-TABLE-"]
         formatted = self.format_sessions(sessions)
         self.window['-SESSION_TABLE-'].update(formatted)
 
@@ -46,6 +47,7 @@ class BrowserView:
         sg.popup(session)
 
     def format_sessions(self, sessions=[]):
+        print("")
         if sessions:
             output = []
             for session in sessions:

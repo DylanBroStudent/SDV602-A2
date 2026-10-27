@@ -1,4 +1,5 @@
 from data.session_repository import SessionRepository
+from data.database_manager   import DatabaseManager
 from view.browser_view       import BrowserView
 
 import FreeSimpleGUI as sg
@@ -8,8 +9,10 @@ import config
 class SessionController:
     def __init__(self, user):
         self.user       = user
+        self.username   = user.name
         self.repository = SessionRepository()
         self.view       = BrowserView()
+        self.db         = DatabaseManager.getInstance()
 
     def run(self):
         sessions = self.repository.all()
@@ -26,7 +29,10 @@ class SessionController:
                 self.view.update_sessions(sessions)
 
             if event == "Create Session":
-                pass
+                name = sg.popup_get_text("Enter new session name:")
+                SessionRepository.create_session(self.repository, self.username, name)
+                sessions = self.repository.all()
+                self.view.update_sessions(sessions)
 
             if event == "Join Session":
                 pass
