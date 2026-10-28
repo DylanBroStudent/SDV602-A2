@@ -1,76 +1,18 @@
-from data.session_repository import SessionRepository
-from data.database_manager   import DatabaseManager
-from view.browser_view       import BrowserView
+from view.session_view import SessionView
 
 import FreeSimpleGUI as sg
-import config
 
 
 class SessionController:
-    def __init__(self, user):
-        self.user       = user
-        self.username   = user.name
-        self.repository = SessionRepository()
-        self.view       = BrowserView()
-        self.db         = DatabaseManager.getInstance()
+    def __init__(self, session_name):
+        self.session_name = session_name
+        self.view         = SessionView(session_name)
 
     def run(self):
-        sessions = self.repository.all()
-        self.view.update_sessions(sessions)
-
         while True:
-            event, values = self.view.read(timeout=config.POLL_RATE)
+            event, values = self.view.read()
 
-            if event == sg.WIN_CLOSED:
+            if event in (sg.WIN_CLOSED, "-CLOSE-"):
                 break
 
-            if event == "-SESSION_TABLE-":
-                # sessions = self.refresh_sessions(sessions, values)
-                pass
-
-            if event == "__TIMEOUT__":
-                sessions = self.refresh_sessions(sessions, values)
-
-            if event == "Create Session":
-
-                name = sg.popup_get_text("Enter new session name:")
-
-                # check name
-                if name is None or not name.strip():
-                    sg.popup_error("session name cannot be empty")
-                    continue
-
-                name = name.strip()
-                
-                SessionRepository.create_session(self.repository, self.username, name)
-                
-                sessions = self.repository.all()
-                self.view.update_sessions(sessions)
-
-            if event == "Join Session":
-                pass
-
-            if event == "Logout":
-                break
-                
         self.view.close()
-        return "logout"
-    
-    def get_selected_session_id(self, sessions, selected_rows):
-        
-        # no row selected
-        if not selected_rows:
-            return None
-        
-        selected_row = selected_rows[0]
-
-        return sessions[selected_row].id
-
-    def refresh_sessions(self, sessions, values):
-
-        selected = self.get_selected_session_id(sessions, values["-SESSION_TABLE-"])
-        sessions = self.repository.all()
-
-        self.view.update_sessions(sessions, selected)
-
-        return sessions

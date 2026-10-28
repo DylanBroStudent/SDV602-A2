@@ -1,7 +1,7 @@
 import argparse
 
 from controller.login_controller   import LoginController
-from controller.session_controller import SessionController
+from controller.browser_controller import BrowserController
 
 from data.user_repository    import UserRepository
 from data.message_repository import MessageRepository
@@ -33,7 +33,7 @@ class App:
                     break
 
                 # catch the logout message
-                outcome = SessionController(user).run()
+                outcome = BrowserController(user).run()
                 # if any outcome besides logout, crash the program.
                 if outcome != "logout":
                     break
