@@ -23,12 +23,21 @@ class App:
             test_manager.run_all_tests()
             return
         else:
-            user = login_controller.run()
+            # loop around to catch logouts
+            while True:
+                login_controller = LoginController(self.user_repository)
+                user = login_controller.run()
 
-            if user:
-                SessionController(user).run()
-            else:
-                print(user)
+                # if no user returned, crash the program
+                if user is None:
+                    break
+
+                # catch the logout message
+                outcome = SessionController(user).run()
+                # if any outcome besides logout, crash the program.
+                if outcome != "logout":
+                    break
+            
 
 
 if __name__ == "__main__":

@@ -24,14 +24,15 @@ class SessionController:
             if event == sg.WIN_CLOSED:
                 break
 
-            if event == "__TIMEOUT__":
-                selected = self.get_selected_session_id(sessions, values["-SESSION_TABLE-"])
-                sessions = self.repository.all()
+            if event == "-SESSION_TABLE-":
+                # sessions = self.refresh_sessions(sessions, values)
+                pass
 
-                self.view.update_sessions(sessions, selected)
+            if event == "__TIMEOUT__":
+                sessions = self.refresh_sessions(sessions, values)
 
             if event == "Create Session":
-                
+
                 name = sg.popup_get_text("Enter new session name:")
 
                 # check name
@@ -50,10 +51,11 @@ class SessionController:
                 pass
 
             if event == "Logout":
-                pass
-
+                break
+                
         self.view.close()
-
+        return "logout"
+    
     def get_selected_session_id(self, sessions, selected_rows):
         
         # no row selected
@@ -63,3 +65,12 @@ class SessionController:
         selected_row = selected_rows[0]
 
         return sessions[selected_row].id
+
+    def refresh_sessions(self, sessions, values):
+
+        selected = self.get_selected_session_id(sessions, values["-SESSION_TABLE-"])
+        sessions = self.repository.all()
+
+        self.view.update_sessions(sessions, selected)
+
+        return sessions
