@@ -25,8 +25,10 @@ class SessionController:
                 break
 
             if event == "__TIMEOUT__":
+                selected = values["-SESSION_TABLE-"]
                 sessions = self.repository.all()
-                self.view.update_sessions(sessions)
+                
+                self.view.update_sessions(sessions, selected)
 
             if event == "Create Session":
                 name = sg.popup_get_text("Enter new session name:")

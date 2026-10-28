@@ -26,10 +26,12 @@ class BrowserView:
 
         self.window = sg.Window("Session Browser", self.layout, finalize=True)
 
-    def update_sessions(self, sessions):
-        selected = values["-TABLE-"]
+    def update_sessions(self, sessions, selected = None):
         formatted = self.format_sessions(sessions)
-        self.window['-SESSION_TABLE-'].update(formatted)
+        self.window['-SESSION_TABLE-'].update(
+            values      = formatted, 
+            select_rows = selected or []
+        )
 
     def clear_input(self):
         self.window['-SEARCH-'].update('')
@@ -47,14 +49,15 @@ class BrowserView:
         sg.popup(session)
 
     def format_sessions(self, sessions=[]):
-        print("")
-        if sessions:
-            output = []
-            for session in sessions:
-                row = [
-                    session.name,
-                    session.host,
-                    len(session.participants)
-                ]
-                output.append(row)
-            return output
+        if sessions is None:
+            sessions = []
+
+        output = []
+        for session in sessions:
+            row = [
+                session.name,
+                session.host,
+                len(session.participants)
+            ]
+            output.append(row)
+        return output
