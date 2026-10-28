@@ -25,14 +25,24 @@ class SessionController:
                 break
 
             if event == "__TIMEOUT__":
-                selected = values["-SESSION_TABLE-"]
+                selected = self.get_selected_session_id(sessions, values["-SESSION_TABLE-"])
                 sessions = self.repository.all()
-                
+
                 self.view.update_sessions(sessions, selected)
 
             if event == "Create Session":
+                
                 name = sg.popup_get_text("Enter new session name:")
+
+                # check name
+                if name is None or not name.strip():
+                    sg.popup_error("session name cannot be empty")
+                    continue
+
+                name = name.strip()
+                
                 SessionRepository.create_session(self.repository, self.username, name)
+                
                 sessions = self.repository.all()
                 self.view.update_sessions(sessions)
 
@@ -43,3 +53,13 @@ class SessionController:
                 pass
 
         self.view.close()
+
+    def get_selected_session_id(self, sessions, selected_rows):
+        
+        # no row selected
+        if not selected_rows:
+            return None
+        
+        selected_row = selected_rows[0]
+
+        return sessions[selected_row].id

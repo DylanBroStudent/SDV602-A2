@@ -15,11 +15,12 @@ class BrowserView:
                 col_widths        = [25, 15, 10],
                 key               = '-SESSION_TABLE-',
                 enable_events     = True,
-                num_rows          = 10
+                num_rows          = 10,
+                select_mode       = sg.TABLE_SELECT_MODE_BROWSE
             )],
             [
-                sg.Button('Join Session'), 
-                sg.Button('Create Session'), 
+                sg.Button('Join Session'),
+                sg.Button('Create Session'),
                 sg.Exit('Logout')
             ]
         ]
@@ -28,9 +29,16 @@ class BrowserView:
 
     def update_sessions(self, sessions, selected = None):
         formatted = self.format_sessions(sessions)
+        
+        selected_rows = []
+        if selected is not None:
+            for i, session in enumerate(sessions):
+                if session.id == selected:
+                    selected_rows.append(i)
+        
         self.window['-SESSION_TABLE-'].update(
             values      = formatted, 
-            select_rows = selected or []
+            select_rows = selected_rows or []
         )
 
     def clear_input(self):
