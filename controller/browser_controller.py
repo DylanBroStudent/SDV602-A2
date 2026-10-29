@@ -61,10 +61,11 @@ class BrowserController:
                 
 
             if event == "Logout":
-                break
+                self.view.close()
+                return "logout"
                 
         self.view.close()
-        return "logout"
+        
 
     
     def get_selected_session_id(self, sessions, selected_rows):
