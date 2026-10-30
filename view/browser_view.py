@@ -21,6 +21,7 @@ class BrowserView:
             [
                 sg.Button('Join Session'),
                 sg.Button('Create Session'),
+                sg.Button('Delete Session', key = "-DELETE_SESSION-"),
                 sg.Exit('Logout')
             ]
         ]
@@ -43,6 +44,9 @@ class BrowserView:
 
     def clear_input(self):
         self.window['-SEARCH-'].update('')
+
+    def set_delete_enabled(self, enabled):
+        self.window['-DELETE_SESSION-'].update(disabled = not enabled)
 
     def read(self, timeout=None):
         return self.window.read(timeout=timeout)

@@ -28,8 +28,19 @@ class BrowserController:
                 break
 
             if event == "-SESSION_TABLE-":
-                # sessions = self.refresh_sessions(sessions, values)
-                pass
+                selected_id = self.get_selected_session_id(
+                    sessions,
+                    values["-SESSION_TABLE-"]
+                )
+
+                # get selected. default to none
+                selected_session = next((session for session in sessions if session.id == selected_id), None)
+                
+                # update the delete button if host
+                self.view.set_delete_enabled(
+                    selected_session is not None 
+                    and selected_session.host == self.username
+                )
 
             if event == "__TIMEOUT__":
                 sessions = self.refresh_sessions(sessions, values)
@@ -92,6 +103,6 @@ class BrowserController:
     def join_session(self, session_id):
         process = Process(
             target = launch_session,
-            args   = (session_id,) # needs the comma so it remains a tuple 
+            args   = (session_id,) # needs the comma so it remains a tuple ¯\_(ツ)_/¯
         )
         process.start()

@@ -1,4 +1,5 @@
-from view.session_view import SessionView
+from data.session_repository import SessionRepository
+from view.session_view       import SessionView
 
 import FreeSimpleGUI as sg
 
@@ -11,7 +12,10 @@ def launch_session(session_id):
 class SessionController:
     def __init__(self, session_id):
         self.session_id = session_id
-        self.view       = SessionView(session_id)
+        self.repository = SessionRepository()
+        self.session    = self.repository.get_one_by_id(session_id)
+        self.view       = SessionView(self.session.name)
+
 
     def run(self):
         while True:

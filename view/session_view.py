@@ -1,27 +1,77 @@
-import FreeSimpleGUI as sg
 
-from matplotlib.figure                 import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure                 import Figure
 
+import FreeSimpleGUI as sg
 
 class SessionView:
     def __init__(self, session_name):
         sg.theme("DarkBlue")
-        
+
         self.session_name = session_name
 
         layout = [
-            [sg.Text(f"Session: {session_name}", font=("Arial", 16, "bold"))],
             [
-                sg.Button("Import CSV",    key="-IMPORT-CSV-"),
-                sg.Button("Close Session", key="-CLOSE-"),
+                sg.Text(
+                    f"Session: {self.session_name}",
+                    font=("Arial", 16, "bold"),
+                    expand_x=True
+                ),
+                sg.Button("Close Session", key="-CLOSE-")
             ],
-            [sg.HorizontalSeparator()],
-            [sg.Canvas(key="-GRAPH-CANVAS-", size=(600, 400))],
+            [
+                # LEFT COLUMN
+                sg.Column([
+                    [sg.Canvas(
+                        key="-GRAPH-CANVAS-",
+                        size=(650, 400),
+                        expand_x=True,
+                        expand_y=True
+                    )],
+                    [sg.HorizontalSeparator()],
+                    [sg.Text("Graph Controls", font=("Arial", 12, "bold"))],
+                    [
+                        sg.Button("Import CSV", key="-IMPORT-CSV-")
+                    ],
+                    [
+                        sg.Text("Graph Title"),
+                        sg.Input(key="-TITLE-", expand_x=True)
+                    ],
+                    [
+                        sg.Text("X Axis"),
+                        sg.Input(key="-X-LABEL-", expand_x=True)
+                    ],
+                    [
+                        sg.Text("Y Axis"),
+                        sg.Input(key="-Y-LABEL-", expand_x=True)
+                    ]
+                ], expand_x=True, expand_y=True),
+
+                # RIGHT COLUMN
+                sg.Column([
+                    [sg.Text("Session Chat", font=("Arial", 12, "bold"))],
+                    [
+                        sg.Multiline(
+                            size=(35, 25),
+                            key="-CHAT-HISTORY-",
+                            disabled=True,
+                            expand_x=True,
+                            expand_y=True
+                        )
+                    ],
+                    [
+                        sg.Input(
+                            key="-CHAT-INPUT-",
+                            expand_x=True
+                        ),
+                        sg.Button("Send", key="-SEND-CHAT-")
+                    ]
+                ], expand_x=True, expand_y=True)
+            ]
         ]
 
         self.window = sg.Window(
-            f"Session - {session_name}",
+            f"Session - {self.session_name}",
             layout,
             resizable=True,
             finalize=True,
@@ -31,11 +81,11 @@ class SessionView:
         figure = Figure(figsize=(6, 4), dpi=100)
         axes   = figure.add_subplot(111)
 
-        axes.plot(x_values, y_values, marker="o")
-        axes.set_title(title)
+        axes.plot      (x_values, y_values, marker="o")
+        axes.set_title (title)
         axes.set_xlabel(x_label)
         axes.set_ylabel(y_label)
-        axes.grid(True)
+        axes.grid      (True)
 
         self.graph_canvas = FigureCanvasTkAgg(
             figure,

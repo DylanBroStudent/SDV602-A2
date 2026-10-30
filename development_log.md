@@ -37,3 +37,10 @@ I wanted to refresh the table whenever a new row was selected, but unfortunately
 
 the logout button was tricky to impliment as it required overhauling the app.py logic. I've encased the top level app logic in a loop, that will return to the login screen in the event of the session browser closing.
 
+I added a delete session button to the browser and check the logged in user against the host to determine if the delete button is active when the session is selected
+
+# 4. Session Window
+
+It took several fixes to use multiprocessing when opening the session window. I'm using a launch function to initialise the session controller, which pulls in the view. Due to what I assume is a windows limitation, my device delays the start of the process by a second.
+
+The graph uses matplotlib.
