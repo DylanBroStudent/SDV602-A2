@@ -1,4 +1,4 @@
-from controller.session_controller import SessionController
+from controller.session_controller import launch_session
 from data.session_repository       import SessionRepository
 from data.database_manager         import DatabaseManager
 from view.browser_view             import BrowserView
@@ -91,7 +91,7 @@ class BrowserController:
 
     def join_session(self, session_id):
         process = Process(
-            target = SessionController.launch,
-            args   = (session_id,)
+            target = launch_session,
+            args   = (session_id,) # needs the comma so it remains a tuple 
         )
         process.start()
