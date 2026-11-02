@@ -70,6 +70,23 @@ class BrowserController:
 
                 self.join_session(selected_id)
                 
+            if event == "-DELETE_SESSION-":
+                selected_id = self.get_selected_session_id(sessions, values["-SESSION_TABLE-"])
+
+                if selected_id is None:
+                    continue
+
+                selected_session = next((session for session in sessions if session.id == selected_id),None)
+
+                if selected_session is None or selected_session.host != self.username:
+                    continue
+
+                self.repository.delete_session(selected_id)
+
+                sessions = self.repository.all()
+                self.view.update_sessions(sessions)
+                self.view.set_delete_enabled(False)
+
 
             if event == "Logout":
                 self.view.close()

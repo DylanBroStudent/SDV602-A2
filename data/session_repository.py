@@ -5,11 +5,14 @@ import config
 
 
 class SessionRepository:
-    def __init__(self):
-        self.db = DatabaseManager.getInstance()
+    def __init__(self, db = None):
+        self.db = db if db is not None else DatabaseManager.getInstance()
 
 
     def create_session(self, host, name):
+
+        if not name or not name.strip():
+            raise ValueError("Session name cannot be empty")
         
         return self.db.insert_one(config.SESSION_COLLECTION, {
             "host"         : host,
@@ -18,7 +21,10 @@ class SessionRepository:
             "participants" : [],
             "data": []
         })
-
+    
+    def delete_session(self, session_id):
+        collection = self.db.get_collection(config.SESSION_COLLECTION)
+        collection.delete_one({"_id": session_id})
     
     def get_one_by_id(self, session_id):
         collection = self.db.get_collection(config.SESSION_COLLECTION)

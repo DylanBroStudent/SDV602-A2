@@ -1,26 +1,35 @@
 from test.database_tests import DatabaseTests
 from test.login_tests    import LoginTests
+from test.session_tests  import SessionTests
+
 
 class TestManager:
     def __init__(self):
         self.database_tests = DatabaseTests()
         self.login_tests    = LoginTests()
+        self.session_tests  = SessionTests()
 
-        self.test_list = [
-            # testing tests
-            ("Expected Success", self.test_success,        None),
-            ("Expected error",   self.test_expected_error, ValueError),
-            ("Wrong error",      self.test_wrong_error,    ValueError),
-
-            # database tests
-            ("Database connection", self.database_tests.test_connection, None),
-
-            # login tests
+        self.testing_tests = [
+            ("Expected Success",   self.test_success,        None),
+            ("Unexpected Success", self.test_success,        ValueError),
+            ("Expected error",     self.test_expected_error, ValueError),
+            ("Unexpected error",   self.test_expected_error, None),
+            ("Wrong error",        self.test_wrong_error,    ValueError)
+        ]
+        self.database_tests = [
+            ("Database connection", self.database_tests.test_connection, None)
+        ]
+        self.login_tests = [
             ("Register account",   self.login_tests.test_register_account,         None),
             ("Account exists",     self.login_tests.test_register_account_exists,  ValueError),
             ("Incorrect password", self.login_tests.test_login_incorrect_password, ValueError),
             ("Correct password",   self.login_tests.test_login_correct_password,   None),
             ("Unknown username",   self.login_tests.test_login_unknown_user,       ValueError)
+        ]
+        self.session_tests = [
+            ("Create session",       self.session_tests.test_create_session,         None),
+            ("Session with no name", self.session_tests.test_create_session_no_name, ValueError),
+            ("Delete session",       self.session_tests.test_delete_session,         None)
         ]
 
 
@@ -56,26 +65,115 @@ class TestManager:
 
 
     def run_all_tests(self):
+        total_run    = 0
+        total_passed = 0
+        total_failed = 0
+
+        print("\n1. TESTING TESTS")
+        testing_test_results = self.run_tests(self.testing_tests)
+
+        print("\n2. DATABASE TESTS")
+        database_test_results = self.run_tests(self.database_tests)
+
+        print("\n3. LOGIN TESTS")
+        login_test_results = self.run_tests(self.login_tests)
+
+        print("\n4. SESSION TESTS")
+        session_test_results = self.run_tests(self.session_tests)
+
+
+        # Calculate totals
+        total_run = (
+            testing_test_results[0] +
+            database_test_results[0] +
+            login_test_results[0] +
+            session_test_results[0]
+        )
+
+        total_passed = (
+            testing_test_results[1] +
+            database_test_results[1] +
+            login_test_results[1] +
+            session_test_results[1]
+        )
+
+        total_failed = (
+            testing_test_results[2] +
+            database_test_results[2] +
+            login_test_results[2] +
+            session_test_results[2]
+        )
+
+        print("\nTEST SUMMARY")
+        
+        print(
+            f"\n{'Category':<15}" 
+            f"{'Run':>8}" 
+            f"{'Passed':>10}" 
+            f"{'Failed':>10}"
+        )
+
+        print("-------------------------------------------")
+
+        print(
+            f"{'General':<15}"
+            f"{testing_test_results[0]:>8}"
+            f"{testing_test_results[1]:>10}"
+            f"{testing_test_results[2]:>10}"
+        )
+
+        print(
+            f"{'Database':<15}"
+            f"{database_test_results[0]:>8}"
+            f"{database_test_results[1]:>10}"
+            f"{database_test_results[2]:>10}"
+        )
+
+        print(
+            f"{'Login':<15}"
+            f"{login_test_results[0]:>8}"
+            f"{login_test_results[1]:>10}"
+            f"{login_test_results[2]:>10}"
+        )
+
+        print(
+            f"{'Session':<15}"
+            f"{session_test_results[0]:>8}"
+            f"{session_test_results[1]:>10}"
+            f"{session_test_results[2]:>10}"
+        )
+
+        print("-------------------------------------------")
+
+        print(
+            f"{'TOTAL':<15}"
+            f"{total_run:>8}"
+            f"{total_passed:>10}"
+            f"{total_failed:>10}"
+        )
+
+
+
+    def run_tests(self, test_list):
         tests_run    = 0
         tests_passed = 0
         tests_failed = 0
 
-        for test in self.test_list:
+        for test in test_list:
             result, given_exception = self.run_test(test[1], test[2])
             tests_run += 1
 
-            # proud of this formatting
             if result == "PASS":
                 tests_passed += 1
-                print(f"Test: {test[0]:<25} Result:\033[92m {result:<10}\033[0m Expected: {str(test[2]):<25} Caught: {str(given_exception):<15}")
-                
+                print(f"    Test: {test[0]:<25} Result:\033[92m {result:<10}\033[0m Expected: {str(test[2]):<25} Caught: {str(given_exception):<15}")
+
             else:
                 tests_failed += 1
-                print(f"Test: {test[0]:<25} Result:\033[91m {result:<10}\033[0m Expected: {str(test[2]):<25} Caught: {str(given_exception):<15}")
-                
-        print(f"\nTests Run:    {tests_run} \nTests Passed: {tests_passed} \nTests Failed: {tests_failed}")
+                print(f"    Test: {test[0]:<25} Result:\033[91m {result:<10}\033[0m Expected: {str(test[2]):<25} Caught: {str(given_exception):<15}")
 
-            
+        return tests_run, tests_passed, tests_failed
+
+    
     def test_success(self):
         assert 1 + 1 == 2
 

@@ -7,9 +7,10 @@ class DatabaseManager:
 
     _instance = None
 
-    def __init__(self):
+    def __init__(self, database_name = config.DB_NAME):
         self.client = MongoClient(config.MONGO_URI)
         self.client.admin.command("ping")
+        self.database = self.client[database_name]
 
     @classmethod
     def getInstance(cls):
@@ -17,8 +18,12 @@ class DatabaseManager:
             cls._instance = cls()
         return cls._instance
 
+    @classmethod
+    def get_test_instance(cls):
+        return cls(config.TEST_DB_NAME)
+
     def get_collection(self, collection):
-        return self.client[config.DB_NAME][collection]
+        return self.database[collection]
 
     def insert_one(self, collection, document):
         return self.get_collection(collection).insert_one(document).inserted_id

@@ -23,6 +23,8 @@ I chose a middle-ground approach to comparing the outcomes. I didn't want to com
 
 Each area of testing has its own _tests.py file such as login_tests which hold the logic for each test in accessible functions for the test_manager.py to pass into the testing function.
 
+I've introduced several expected failures to the start of the headless testing list. this is to test the tests and ensure every outcome is performing as expected.
+
 
 # 3. Session Browser
 

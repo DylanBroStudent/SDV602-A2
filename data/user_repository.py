@@ -5,8 +5,8 @@ import config
 from model.user import User
 
 class UserRepository:
-    def __init__(self):
-        self.db = DatabaseManager.getInstance()
+    def __init__(self, db = None):
+        self.db = db if db is not None else DatabaseManager.getInstance()
         
 
     def login(self, username, password):    

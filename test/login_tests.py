@@ -7,8 +7,8 @@ import config
 
 class LoginTests:
     def __init__(self):
-        self.db = DatabaseManager.getInstance()
-        self.repository = UserRepository()
+        self.db         = DatabaseManager.get_test_instance()
+        self.repository = UserRepository(self.db)
 
         # Unique username so future tests don't trip up
         import uuid
@@ -22,8 +22,12 @@ class LoginTests:
         assert stored_user is not None
 
     def test_register_account_exists(self):
-        stored_user = self.db.find_one_by_name(config.USER_COLLECTION, "TakenUsername")
-        if stored_user is not None:
+        stored_user = self.db.find_one_by_name(
+            config.USER_COLLECTION,
+            "TakenUsername"
+        )
+
+        if stored_user is None:
             self.repository.create_user("TakenUsername", self.password)
 
         user = self.repository.create_user("TakenUsername", self.password)
