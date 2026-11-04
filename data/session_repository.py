@@ -19,12 +19,20 @@ class SessionRepository:
             "name"         : name,
             "status"       : "active",
             "participants" : [],
-            "data": []
+            "data"         : []
         })
     
     def delete_session(self, session_id):
         collection = self.db.get_collection(config.SESSION_COLLECTION)
         collection.delete_one({"_id": session_id})
+
+    def remove_data(self, session_id, filename):
+        collection = self.db.get_collection(config.SESSION_COLLECTION)
+
+        collection.update_one(
+            {"_id": session_id},
+            {"$pull": {"data": {"filename": filename}}}
+        )
     
     def get_one_by_id(self, session_id):
         collection = self.db.get_collection(config.SESSION_COLLECTION)

@@ -1,6 +1,7 @@
 from test.database_tests import DatabaseTests
 from test.login_tests    import LoginTests
 from test.session_tests  import SessionTests
+from test.import_tests   import ImportTests
 
 
 class TestManager:
@@ -8,6 +9,7 @@ class TestManager:
         self.database_tests = DatabaseTests()
         self.login_tests    = LoginTests()
         self.session_tests  = SessionTests()
+        self.import_tests   = ImportTests()
 
         self.testing_tests = [
             ("Expected Success",   self.test_success,        None),
@@ -30,6 +32,11 @@ class TestManager:
             ("Create session",       self.session_tests.test_create_session,         None),
             ("Session with no name", self.session_tests.test_create_session_no_name, ValueError),
             ("Delete session",       self.session_tests.test_delete_session,         None)
+        ]
+        self.import_tests = [
+            ("Import CSV",           self.import_tests.test_import_csv,           None),
+            ("Import duplicate CSV", self.import_tests.test_import_duplicate_csv, ValueError),
+            ("Remove Dataset",       self.import_tests.test_remove_dataset,       None)
         ]
 
 
@@ -81,27 +88,32 @@ class TestManager:
         print("\n4. SESSION TESTS")
         session_test_results = self.run_tests(self.session_tests)
 
+        print("\n5. IMPORT TESTS")
+        import_test_results = self.run_tests(self.import_tests)
 
         # Calculate totals
         total_run = (
             testing_test_results[0] +
             database_test_results[0] +
             login_test_results[0] +
-            session_test_results[0]
+            session_test_results[0] +
+            import_test_results[0]
         )
 
         total_passed = (
             testing_test_results[1] +
             database_test_results[1] +
             login_test_results[1] +
-            session_test_results[1]
+            session_test_results[1] +
+            import_test_results[0]
         )
 
         total_failed = (
             testing_test_results[2] +
             database_test_results[2] +
             login_test_results[2] +
-            session_test_results[2]
+            session_test_results[2] +
+            import_test_results[0]
         )
 
         print("\nTEST SUMMARY")
@@ -116,7 +128,7 @@ class TestManager:
         print("-------------------------------------------")
 
         print(
-            f"{'General':<15}"
+            f"{'Testing':<15}"
             f"{testing_test_results[0]:>8}"
             f"{testing_test_results[1]:>10}"
             f"{testing_test_results[2]:>10}"
@@ -141,6 +153,13 @@ class TestManager:
             f"{session_test_results[0]:>8}"
             f"{session_test_results[1]:>10}"
             f"{session_test_results[2]:>10}"
+        )
+
+        print(
+            f"{'Import':<15}"
+            f"{import_test_results[0]:>8}"
+            f"{import_test_results[1]:>10}"
+            f"{import_test_results[2]:>10}"
         )
 
         print("-------------------------------------------")

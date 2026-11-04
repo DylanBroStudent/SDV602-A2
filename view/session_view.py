@@ -14,8 +14,8 @@ class SessionView:
             [
                 sg.Text(
                     f"Session: {self.session_name}",
-                    font=("Arial", 16, "bold"),
-                    expand_x=True
+                    font     = ("Arial", 16, "bold"),
+                    expand_x = True
                 ),
                 sg.Button("Close Session", key="-CLOSE-")
             ],
@@ -23,62 +23,96 @@ class SessionView:
                 # LEFT COLUMN
                 sg.Column([
                     [sg.Canvas(
-                        key="-GRAPH-CANVAS-",
-                        size=(650, 400),
-                        expand_x=True,
-                        expand_y=True
+                        key      = "-GRAPH_CANVAS-",
+                        size     = (650, 400),
+                        expand_x = True,
+                        expand_y = True
                     )],
                     [sg.HorizontalSeparator()],
-                    [sg.Text("Graph Controls", font=("Arial", 12, "bold"))],
+                    [sg.Text("Graph Controls", font = ("Arial", 12, "bold"))],
                     [
-                        sg.Button("Import CSV", key="-IMPORT-CSV-")
+                        sg.FileBrowse(
+                            "Import CSV",
+                            key        = "-IMPORT_CSV-",
+                            target     = "-CSV_PATH-",
+                            file_types = (("CSV Files", "*.csv"),)
+                        ),
+                        # invisible element to hold the path
+                        sg.Input(
+                            key           = "-CSV_PATH-",
+                            visible       = False,
+                            enable_events = True
+                        )
                     ],
                     [
-                        sg.Text("Graph Title"),
-                        sg.Input(key="-TITLE-", expand_x=True)
+                        sg.Text("Dataset"),
+                        sg.Combo(
+                            values        = [],
+                            key           = "-DATASET-",
+                            expand_x      = True,
+                            enable_events = True,
+                            readonly      = True
+                        ),
+                        sg.Button("Remove", key="-REMOVE_DATASET-")
                     ],
                     [
                         sg.Text("X Axis"),
-                        sg.Input(key="-X-LABEL-", expand_x=True)
+                        sg.Combo(
+                            values        = [],
+                            key           = "-X_AXIS-",
+                            expand_x      = True,
+                            enable_events = True,
+                            readonly      = True
+                        )
                     ],
                     [
                         sg.Text("Y Axis"),
-                        sg.Input(key="-Y-LABEL-", expand_x=True)
+                        sg.Listbox(
+                            values      = [],
+                            key         = "-Y_AXIS-",
+                            select_mode = sg.LISTBOX_SELECT_MODE_MULTIPLE,
+                            size        = (20, 5),
+                            expand_x    = True
+                        )
                     ]
-                ], expand_x=True, expand_y=True),
+                ], expand_x = True, expand_y = True),
 
                 # RIGHT COLUMN
                 sg.Column([
-                    [sg.Text("Session Chat", font=("Arial", 12, "bold"))],
+                    [sg.Text("Session Chat", font = ("Arial", 12, "bold"))],
                     [
                         sg.Multiline(
-                            size=(35, 25),
-                            key="-CHAT-HISTORY-",
-                            disabled=True,
-                            expand_x=True,
-                            expand_y=True
+                            size     = (35, 25),
+                            key      = "-CHAT_HISTORY-",
+                            disabled = True,
+                            expand_x = True,
+                            expand_y = True
                         )
                     ],
                     [
                         sg.Input(
-                            key="-CHAT-INPUT-",
-                            expand_x=True
+                            key      = "-CHAT_INPUT-",
+                            expand_x = True,
+                            size     = (10, 1)
                         ),
-                        sg.Button("Send", key="-SEND-CHAT-")
+                        sg.Button("Send", key = "-SEND_CHAT-")
                     ]
-                ], expand_x=True, expand_y=True)
+                ], expand_x = True, expand_y = True)
             ]
         ]
 
         self.window = sg.Window(
             f"Session - {self.session_name}",
             layout,
-            resizable=True,
-            finalize=True,
+            resizable = True,
+            finalize  = True,
+            size      = (1280, 720),
         )
+        # set minimum size
+        self.window.TKroot.minsize(1000, 700)
 
-    def draw_graph(self, x_values, y_values, title="Data Graph", x_label="X", y_label="Y"):
-        figure = Figure(figsize=(6, 4), dpi=100)
+    def draw_graph(self, x_values, y_values, title = "Data Graph", x_label = "X", y_label = "Y"):
+        figure = Figure(figsize = (6, 4), dpi = 100)
         axes   = figure.add_subplot(111)
 
         axes.plot      (x_values, y_values, marker="o")
@@ -89,7 +123,7 @@ class SessionView:
 
         self.graph_canvas = FigureCanvasTkAgg(
             figure,
-            master=self.window["-GRAPH-CANVAS-"].TKCanvas,
+            master = self.window["-GRAPH-CANVAS-"].TKCanvas,
         )
         self.graph_canvas.draw()
         self.graph_canvas.get_tk_widget().pack(
@@ -97,6 +131,12 @@ class SessionView:
             fill   = "both",
             expand = True,
     )
+        
+    def update_datasets(self, datasets, columns):
+        self.window["-DATASET-"].update(values = datasets)
+        self.window["-X_AXIS-"] .update(values = columns)
+        self.window["-Y_AXIS-"] .update(values = columns)
+    
 
     def read(self, timeout=None):
         return self.window.read(timeout=timeout)

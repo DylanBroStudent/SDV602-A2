@@ -25,6 +25,10 @@ Each area of testing has its own _tests.py file such as login_tests which hold t
 
 I've introduced several expected failures to the start of the headless testing list. this is to test the tests and ensure every outcome is performing as expected.
 
+I've refactored the headless testing to run tests in categories and tally the results in a table. I think it makes the testing much easier to read.
+
+testing sessions and data importing required refactoring the repositories and controllers to accept databases as an arguement, and to allow the session controller and process to be initialised without a window.
+
 
 # 3. Session Browser
 
@@ -44,5 +48,11 @@ I added a delete session button to the browser and check the logged in user agai
 # 4. Session Window
 
 It took several fixes to use multiprocessing when opening the session window. I'm using a launch function to initialise the session controller, which pulls in the view. Due to what I assume is a windows limitation, my device delays the start of the process by a second.
+
+The import function uses a file browser to select a valid .csv file.
+
+I need multiple lines. so I've made the Y axis a multi-selection.
+
+
 
 The graph uses matplotlib.

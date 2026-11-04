@@ -9,12 +9,10 @@ class Session:
             data         = None
             ):
         
-        self.id     = session_id
-        self.name   = name
-        self.host   = host
-        self.status = status
-
-        if (participants is not None):
-            self.participants = participants
-        else:
-            self.participants = []
+        self.id           = session_id
+        self.name         = name
+        self.host         = host
+        self.status       = status
+        self.participants = participants if participants is not None else []
+        self.data         = data         if data         is not None else []
+        
