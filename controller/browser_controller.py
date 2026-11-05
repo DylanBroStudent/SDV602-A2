@@ -120,6 +120,6 @@ class BrowserController:
     def join_session(self, session_id):
         process = Process(
             target = launch_session,
-            args   = (session_id,) # needs the comma so it remains a tuple ¯\_(ツ)_/¯
+            args   = (session_id, self.username)
         )
         process.start()

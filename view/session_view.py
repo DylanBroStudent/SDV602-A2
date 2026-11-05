@@ -102,11 +102,11 @@ class SessionView:
                     ],
                     [
                         sg.Input(
-                            key      = "-CHAT_INPUT-",
-                            expand_x = True,
-                            size     = (10, 1)
+                            key             = "-CHAT_INPUT-",
+                            expand_x        = True,
+                            size            = (10, 1)
                         ),
-                        sg.Button("Send", key = "-SEND_CHAT-")
+                        sg.Button("Send", key = "-SEND_CHAT-", bind_return_key = True)
                     ]
                 ], expand_x = True, expand_y = True)
             ]
@@ -165,7 +165,20 @@ class SessionView:
 
 
     def read(self, timeout=None):
-        return self.window.read(timeout=timeout)
+        return self.window.read(timeout = timeout)
+
+
+    def update_messages(self, messages):
+        output = ""
+
+        for message in messages:
+            output += f"{message.username}: {message.text}\n"
+
+        self.window["-CHAT_HISTORY-"].update(output)
+
+
+    def clear_chat_input(self):
+        self.window["-CHAT_INPUT-"].update("")
 
 
     def close(self):

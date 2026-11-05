@@ -5,34 +5,25 @@ import FreeSimpleGUI as sg
 
 
 class ChatController:
-    def __init__(self, username, message_repository):
+    def __init__(self, session_id, username, message_repository, view):
+        self.session_id         = session_id
+        self.username           = username
         self.message_repository = message_repository
-        self.username = username
+        self.view               = view
 
-        self.view = ChatView()
 
-    def run(self):
-        messages = self.message_repository.all()
+    def update_messages(self):
+        messages = self.message_repository.all(self.session_id)
         self.view.update_messages(messages)
-    
-    
-        while True:
-            event, values = self.view.read(timeout=config.POLL_RATE)
-    
-            if event == sg.WIN_CLOSED:
-                break
-    
-            if event == "__TIMEOUT__":
-                messages = self.message_repository.all()
-                self.view.update_messages(messages)
-    
-            if event == "Send":
-                text = values["-CHAT-"]
-    
-                if text:
-                    self.message_repository.create_message(self.username, text)
-                    self.view.clear_input()
-                    messages = self.message_repository.all()
-                    self.view.update_messages(messages)
-    
-        self.view.close()
+
+
+    def send_message(self, text):
+        if text:
+            self.message_repository.create_message(
+                self.session_id,
+                self.username,
+                text
+            )
+
+            self.view.clear_chat_input()
+            self.update_messages()

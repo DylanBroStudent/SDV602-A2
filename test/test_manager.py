@@ -2,6 +2,7 @@ from test.database_tests import DatabaseTests
 from test.login_tests    import LoginTests
 from test.session_tests  import SessionTests
 from test.import_tests   import ImportTests
+from test.chat_tests     import ChatTests
 
 
 class TestManager:
@@ -10,6 +11,7 @@ class TestManager:
         self.login_tests    = LoginTests()
         self.session_tests  = SessionTests()
         self.import_tests   = ImportTests()
+        self.chat_tests     = ChatTests()
 
         self.testing_tests = [
             ("Expected Success",   self.test_success,        None),
@@ -37,6 +39,9 @@ class TestManager:
             ("Import CSV",           self.import_tests.test_import_csv,           None),
             ("Import duplicate CSV", self.import_tests.test_import_duplicate_csv, ValueError),
             ("Remove Dataset",       self.import_tests.test_remove_dataset,       None)
+        ]
+        self.chat_tests = [
+            ("Send message",       self.chat_tests.test_send_message,  None)
         ]
 
 
@@ -91,13 +96,17 @@ class TestManager:
         print("\n5. IMPORT TESTS")
         import_test_results = self.run_tests(self.import_tests)
 
+        print("\n6. CHAT TESTS")
+        chat_test_results = self.run_tests(self.chat_tests)
+
         # Calculate totals
         total_run = (
             testing_test_results[0] +
             database_test_results[0] +
             login_test_results[0] +
             session_test_results[0] +
-            import_test_results[0]
+            import_test_results[0] +
+            chat_test_results[0]
         )
 
         total_passed = (
@@ -105,7 +114,8 @@ class TestManager:
             database_test_results[1] +
             login_test_results[1] +
             session_test_results[1] +
-            import_test_results[1]
+            import_test_results[1] +
+            chat_test_results[1]
         )
 
         total_failed = (
@@ -113,7 +123,8 @@ class TestManager:
             database_test_results[2] +
             login_test_results[2] +
             session_test_results[2] +
-            import_test_results[2]
+            import_test_results[2] +
+            chat_test_results[2]
         )
 
         print("\nTEST SUMMARY")
@@ -160,6 +171,13 @@ class TestManager:
             f"{import_test_results[0]:>8}"
             f"{import_test_results[1]:>10}"
             f"{import_test_results[2]:>10}"
+        )
+
+        print(
+            f"{'Import':<15}"
+            f"{chat_test_results[0]:>8}"
+            f"{chat_test_results[1]:>10}"
+            f"{chat_test_results[2]:>10}"
         )
 
         print("-------------------------------------------")

@@ -1,5 +1,7 @@
-from data.session_repository import SessionRepository
-from view.session_view       import SessionView
+from data.session_repository    import SessionRepository
+from view.session_view          import SessionView
+from controller.chat_controller import ChatController
+from data.message_repository    import MessageRepository
 
 import config
 
@@ -8,22 +10,32 @@ import csv
 import os
 
 
-def launch_session(session_id):
-    controller = SessionController(session_id)
+def launch_session(session_id, username):
+    controller = SessionController(session_id, username)
     controller.run()
 
 class SessionController:
-    def __init__(self, session_id, repository = None, create_view = True):
+    def __init__(self, session_id, username = None, repository = None, create_view = True):
         self.session_id        = session_id
+        self.username          = username
         self.repository        = repository if repository is not None else SessionRepository()
         self.session           = self.repository.get_one_by_id(session_id)
         self.previous_datasets = None
 
-        self.view       = None
+        self.view = None
         
         # make session able to be initialised without a view for headless testing
         if create_view:
             self.view = SessionView(self.session.name)
+
+            self.chat_controller = ChatController(
+                self.session_id,
+                self.username,
+                MessageRepository(),
+                self.view
+            )
+
+            self.chat_controller.update_messages()
             self.update_datasets()
             self.update_graph()
 
@@ -36,6 +48,8 @@ class SessionController:
             if event == sg.TIMEOUT_EVENT:
                 self.update_datasets()
                 self.update_graph()
+                self.chat_controller.update_messages()
+
                 continue
 
             if event == "-CSV_PATH-":
@@ -73,6 +87,10 @@ class SessionController:
                     )
 
                 self.update_graph()
+
+            if event == "-SEND_CHAT-":
+                text = values["-CHAT_INPUT-"].strip()
+                self.chat_controller.send_message(text)
 
             if event in (sg.WIN_CLOSED, "-CLOSE-"):
                 break
