@@ -17,6 +17,7 @@ class SessionController:
         self.session    = self.repository.get_one_by_id(session_id)
         
         self.view       = None
+        
         # make session able to be initialised without a view for headless testing
         if create_view:
             self.view = SessionView(self.session.name)

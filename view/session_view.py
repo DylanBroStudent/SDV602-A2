@@ -67,9 +67,19 @@ class SessionView:
                     ],
                     [
                         sg.Text("Y Axis"),
+                        sg.Combo(
+                            values        = [],
+                            key           = "-Y_AXIS-",
+                            expand_x      = True,
+                            enable_events = True,
+                            readonly      = True
+                        )
+                    ],
+                    [
+                        sg.Text("Series"),
                         sg.Listbox(
                             values      = [],
-                            key         = "-Y_AXIS-",
+                            key         = "-SERIES-",
                             select_mode = sg.LISTBOX_SELECT_MODE_MULTIPLE,
                             size        = (20, 5),
                             expand_x    = True
@@ -136,6 +146,7 @@ class SessionView:
         self.window["-DATASET-"].update(values = datasets)
         self.window["-X_AXIS-"] .update(values = columns)
         self.window["-Y_AXIS-"] .update(values = columns)
+        self.window["-SERIES-"] .update(values = columns)
     
 
     def read(self, timeout=None):
