@@ -45,6 +45,7 @@ the logout button was tricky to impliment as it required overhauling the app.py 
 
 I added a delete session button to the browser and check the logged in user against the host to determine if the delete button is active when the session is selected
 
+
 # 4. Session Window
 
 It took several fixes to use multiprocessing when opening the session window. I'm using a launch function to initialise the session controller, which pulls in the view. Due to what I assume is a windows limitation, my device delays the start of the process by a second.
@@ -52,7 +53,13 @@ It took several fixes to use multiprocessing when opening the session window. I'
 The import function uses a file browser to select a valid .csv file.
 
 I need multiple lines. so I've made the Y axis a multi-selection.
+Scratch that. I've found the example code, and I've implemented series. each dataset now includes a list of enabled series. this lets each dataset have its own set of enabled or disabled lines on the chart. the axes have only one by name, so graphs with the same column names won't fill the list. unsure how this might break if I try displaying very different graphs with the same column names, but I'm sure it'll make a fun test.
 
+now I'm putting all the series in a big multi select and naming them by dataset, so I don't have to keep switching the dataset.
+why did I do that? it's made everything more complicated, but its improved UX!
 
+The graph uses matplotlib to display a line graph
 
-The graph uses matplotlib.
+took me way too long but I fixed it only using the first dataset's x axis instead of extending it.
+
+somehow the most difficult task has been making the updated ui elements not scroll back to the start. I fixed it by only updating the elements when the  dataset options have actually changed, rather than refreshing them on every polling cycle.

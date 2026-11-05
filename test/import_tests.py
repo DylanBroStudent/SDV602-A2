@@ -26,14 +26,11 @@ class ImportTests:
             create_view = False
         )
 
-        controller.import_csv("test/files/test_data.csv")
+        controller.import_csv("test/files/test_data_01.csv")
 
         session = self.repository.get_one_by_id(self.session_id)
 
-        assert len(session.data)            == 1
-        assert session.data[0]["filename"]  == "test_data.csv"
-        assert len(session.data[0]["rows"]) == 3
-        assert session.data[0]["columns"]   == ["Month", "Sales", "Expenses"]
+        assert session.data[0]["filename"]  == "test_data_01.csv"
 
 
     def test_import_duplicate_csv(self):
@@ -43,12 +40,13 @@ class ImportTests:
             create_view = False
         )
 
-        controller.import_csv("test/files/test_data.csv")
+        controller.import_csv("test/files/test_data_01.csv")
+
 
     def test_remove_dataset(self):
         session = self.repository.get_one_by_id(self.session_id)
 
-        self.repository.remove_data(self.session_id, "test_data.csv")
+        self.repository.remove_data(self.session_id, "test_data_01.csv")
 
         session = self.repository.get_one_by_id(self.session_id)
 

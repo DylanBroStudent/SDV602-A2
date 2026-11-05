@@ -78,11 +78,12 @@ class SessionView:
                     [
                         sg.Text("Series"),
                         sg.Listbox(
-                            values      = [],
-                            key         = "-SERIES-",
-                            select_mode = sg.LISTBOX_SELECT_MODE_MULTIPLE,
-                            size        = (20, 5),
-                            expand_x    = True
+                            values        = [],
+                            key           = "-SERIES-",
+                            select_mode   = sg.LISTBOX_SELECT_MODE_MULTIPLE,
+                            size          = (20, 5),
+                            expand_x      = True,
+                            enable_events = True
                         )
                     ]
                 ], expand_x = True, expand_y = True),
@@ -121,36 +122,51 @@ class SessionView:
         # set minimum size
         self.window.TKroot.minsize(1000, 700)
 
-    def draw_graph(self, x_values, y_values, title = "Data Graph", x_label = "X", y_label = "Y"):
-        figure = Figure(figsize = (6, 4), dpi = 100)
-        axes   = figure.add_subplot(111)
+    def draw_graph(self, x_values, series, x_label="X", title="Data Graph"):
 
-        axes.plot      (x_values, y_values, marker="o")
-        axes.set_title (title)
-        axes.set_xlabel(x_label)
-        axes.set_ylabel(y_label)
-        axes.grid      (True)
+        # create graph only once
+        if not hasattr(self, "graph_canvas"):
+            figure = Figure(figsize=(6, 4), dpi=100)
+            self.axes = figure.add_subplot(111)
 
-        self.graph_canvas = FigureCanvasTkAgg(
-            figure,
-            master = self.window["-GRAPH-CANVAS-"].TKCanvas,
-        )
-        self.graph_canvas.draw()
-        self.graph_canvas.get_tk_widget().pack(
-            side   = "top",
-            fill   = "both",
-            expand = True,
-    )
-        
-    def update_datasets(self, datasets, columns):
-        self.window["-DATASET-"].update(values = datasets)
-        self.window["-X_AXIS-"] .update(values = columns)
-        self.window["-Y_AXIS-"] .update(values = columns)
-        self.window["-SERIES-"] .update(values = columns)
+            self.graph_canvas = FigureCanvasTkAgg(
+                figure,
+                master=self.window["-GRAPH_CANVAS-"].TKCanvas
+            )
+
+            self.graph_canvas.get_tk_widget().pack(
+                side="top",
+                fill="both",
+                expand=True
+            )
+
+        # clear previous data
+        self.axes.clear()
+
+        # draw updated data
+        for name, y_values in series.items():
+            self.axes.plot(x_values, y_values, marker="o", label=name)
+
+        if series:
+            self.axes.legend()
+
+        self.axes.set_title(title)
+        self.axes.set_xlabel(x_label)
+        self.axes.grid(True)
+
+        self.graph_canvas.draw_idle()
+
     
+    def update_datasets(self, datasets, columns, series):
+        self.window["-DATASET-"].update(values = datasets)
+        self.window["-X_AXIS-" ].update(values = columns)
+        self.window["-Y_AXIS-" ].update(values = columns)
+        self.window["-SERIES-" ].update(values = series) 
+
 
     def read(self, timeout=None):
         return self.window.read(timeout=timeout)
+
 
     def close(self):
         self.window.close()

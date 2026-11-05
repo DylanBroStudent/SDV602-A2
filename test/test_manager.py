@@ -105,7 +105,7 @@ class TestManager:
             database_test_results[1] +
             login_test_results[1] +
             session_test_results[1] +
-            import_test_results[0]
+            import_test_results[1]
         )
 
         total_failed = (
@@ -113,7 +113,7 @@ class TestManager:
             database_test_results[2] +
             login_test_results[2] +
             session_test_results[2] +
-            import_test_results[0]
+            import_test_results[2]
         )
 
         print("\nTEST SUMMARY")

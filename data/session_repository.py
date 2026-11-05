@@ -73,6 +73,14 @@ class SessionRepository:
         collection = self.db.get_collection(config.SESSION_COLLECTION)
 
         collection.update_one(
-            {"_id": session_id},
+            {"_id"  : session_id},
             {"$push": {"data": dataset}}
+        )
+
+    def update_enabled_series(self, session_id, filename, enabled_series):
+        collection = self.db.get_collection(config.SESSION_COLLECTION)
+
+        collection.update_one(
+            {"_id" : session_id, "data.filename": filename},
+            {"$set": {"data.$.enabled_series": enabled_series}}
         )
